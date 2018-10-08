@@ -4,30 +4,38 @@ var mouse = new THREE.Vector2(), INTERSECTED, CLICKED;
 var radius = 100, theta = 0;
 var robot_idle;
 
+var robot_mixer = {};
+var deadAnimator;
+var morphs = [];
+
+var duration = 20000; // ms
+var currentTime = Date.now();
+
 var animator = null,
 duration = 2, // sec
 loopAnimation = false;
 
+var animation = "idle";
+
 function loadFBX()
 {
-    console.log("load");
     var loader = new THREE.FBXLoader();
-    loader.load( 'Robot/robot_idle.fbx', function ( object ) 
+    loader.load( 'Robot/robot_run.fbx', function ( object ) 
     {
         robot_mixer["idle"] = new THREE.AnimationMixer( scene );
-        //object.scale.set(10, 10, 10);
-        object.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
+        object.scale.set(0.05, 0.05, 0.05);
+        object.rotation.set(0, 0, 0);
+        object.position.set(0, 0, -100);
         object.traverse( function ( child ) {
             if ( child.isMesh ) {
                 child.castShadow = true;
                 child.receiveShadow = true;
             }
         } );
+
         robot_idle = object;
         scene.add( robot_idle );
-        
-        console.log(robot_idle);
-        
+              
         createDeadAnimation();
 
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot_idle ).play();
@@ -36,18 +44,6 @@ function loadFBX()
         {
             robot_mixer["attack"] = new THREE.AnimationMixer( scene );
             robot_mixer["attack"].clipAction( object.animations[ 0 ], robot_idle ).play();
-        } );
-
-        loader.load( 'Robot/robot_run.fbx', function ( object ) 
-        {
-            robot_mixer["run"] = new THREE.AnimationMixer( scene );
-            robot_mixer["run"].clipAction( object.animations[ 0 ], robot_idle ).play();
-        } );
-
-        loader.load( 'Robot/robot_walk.fbx', function ( object ) 
-        {
-            robot_mixer["walk"] = new THREE.AnimationMixer( scene );
-            robot_mixer["walk"].clipAction( object.animations[ 0 ], robot_idle ).play();
         } );
     } );
 }
@@ -90,7 +86,7 @@ function createScene(canvas)
     scene.background = new THREE.Color( 0xf0f0f0 );
     
     var light = new THREE.DirectionalLight( 0xffffff, 1 );
-    light.position.set( 1, 1, 1 );
+    light.position.set( 1, 1, 100 );
     scene.add( light );
 
     loadFBX();
@@ -191,16 +187,27 @@ function onDocumentMouseDown(event)
     }
 }
 
-function run() 
-{
-    requestAnimationFrame( run );
-    KF.update();
-    if(robot_idle)
-        robot_idle.position.set(100,100, -200);
-    render();
+function animate() {
+
+    var now = Date.now();
+    var deltat = now - currentTime;
+    currentTime = now;
+
+    if(robot_idle && robot_mixer[animation])
+    {
+        robot_mixer[animation].update(deltat);
+    }
+
+    if(animation =="dead")
+    {
+        KF.update();
+    }
 }
 
-function render() 
+function run() 
 {
+    requestAnimationFrame(function() { run(); });
     renderer.render( scene, camera );
+    animate();
+    KF.update();
 }

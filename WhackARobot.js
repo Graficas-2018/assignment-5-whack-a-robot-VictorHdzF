@@ -17,6 +17,11 @@ loopAnimation = false;
 
 var animation = "idle";
 
+function createDeadAnimation()
+{
+
+}
+
 function loadFBX()
 {
     var loader = new THREE.FBXLoader();
@@ -195,7 +200,7 @@ function animate() {
 
     if(robot_idle && robot_mixer[animation])
     {
-        robot_mixer[animation].update(deltat);
+        robot_mixer[animation].update(deltat*0.001);
     }
 
     if(animation =="dead")

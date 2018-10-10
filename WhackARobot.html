@@ -28,6 +28,48 @@
       border: 0;
       overflow: hidden; 
       display: block;  
+      background-color: rgb(233, 233, 233);
+    }
+
+    #time {
+        position: absolute;
+        color : black;
+        top: 25px;
+        left: 20px;
+    }
+
+    #score {
+        position: absolute;
+        color : black;
+        top: 25px;
+        right: 20px;
+    }
+
+    #reset {
+        top: 0;
+        bottom: 0; 
+        left: 0; 
+        right: 0;
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        margin: auto; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: rgb(0, 0, 0);
+        text-align: center;
+        font-size: 1em;
+        background-color: rgb(43, 255, 0);
+    }
+
+    #reset:hover {
+        cursor: pointer;
+        background-color: rgb(34, 161, 2);
+    }
+
+    resert.hidden {
+        display: none;
     }
 </style>
 
@@ -48,7 +90,10 @@
 
 </head>
 <body>
-
+    <h1 id="score">Score:0</h1>
+    <h1 id="time">Time:30 </h1>
+    <!--<div id="reset" class="hidden">  -->
+        <!--<p>Play Again</p> </div>-->
 <div id="container">
     <canvas id="webglcanvas"></canvas>
 </div>

@@ -4,7 +4,6 @@ var mouse = new THREE.Vector2(), INTERSECTED, CLICKED;
 var radius = 100, theta = 0;
 var robot0;
 var robot_mixer = {};
-var deadAnimator;
 var robots = [];
 var currentTime = Date.now();
 var animation = "idle";
@@ -12,10 +11,9 @@ var tag = null;
 var animator = null;
 var score = 0;
 var timer = 0;
-var start = false;
 var reset = null;
 var count = 0;
-var last = 7;
+var last = 6;
 
 function DeadAnimation(object)
 {
@@ -173,7 +171,7 @@ function createScene(canvas)
     
     raycaster = new THREE.Raycaster();
    
-    timer = Date.now() + 450000;
+    timer = Date.now() + 45000;
     score_l = $("#score");
     time = $("#time");
     reset = $("#reset");
@@ -251,9 +249,7 @@ function run()
         count = 0;
         last = rand;
     }
-    if (rand == last)
-        last = 7;
-
+    
     time.text("Time:" + Math.round((timer - now)/1000));
 
     if (Date.now() >= timer)

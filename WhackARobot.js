@@ -23,9 +23,10 @@ function DeadAnimation(object)
     animator2.init({ 
         interps: [
             {
-                keys: [0, 0.5, 1],
+                keys: [0, 0.5, 0.7, 1],
                 values: [
                     {z: 0},
+                    {x: 0, z: -2},
                     {x: 0, z: -2},
                     {x: 0, z: 0},
                 ],
@@ -33,7 +34,7 @@ function DeadAnimation(object)
             }
             ],
         loop: false,
-        duration: 800,
+        duration: 950,
     });
     animator2.start();
 }
@@ -57,7 +58,7 @@ function UpAnimation(object)
             }
             ],
         loop: false,
-        duration:duration * 1200,
+        duration:duration * 1250,
     });
     animator.start();
 }
@@ -94,45 +95,38 @@ function loadFBX()
         robot1.tag="r";
         robot1.position.set(0, 18, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot1).play();
-        //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot1).play();
         group.add( robot1 );
 
         var robot2 = cloneFbx(object);
         robot2.tag="r";
         robot2.position.set(110, 18, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot2).play();
-        //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot2 ).play();
         group.add( robot2 );
 
         var robot3 = cloneFbx(object);
         robot3.tag="r";
         robot3.position.set(-102, -40, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot3).play();
-        //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot3 ).play();
         group.add( robot3 );
 
         var robot4 = cloneFbx(object);
-        robot4.name="r";
+        robot4.tag="r";
         robot4.position.set(0, -40, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot4).play();
-        //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot4 ).play();
         group.add( robot4 );
 
         var robot5 = cloneFbx(object);
         robot5.tag="r";
         robot5.position.set(102, -40, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot5).play();
-        //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot5 ).play();
         group.add( robot5 );
-
 
         robots.push(robot0);
         robots.push(robot1);
         robots.push(robot2);
         robots.push(robot3);
         robots.push(robot4);
-        robots.push(robot5);
-        
+        robots.push(robot5);  
     });
 }
 
@@ -179,7 +173,7 @@ function createScene(canvas)
     
     raycaster = new THREE.Raycaster();
    
-    timer = Date.now() + 45000;
+    timer = Date.now() + 450000;
     score_l = $("#score");
     time = $("#time");
     reset = $("#reset");
@@ -193,12 +187,12 @@ function createScene(canvas)
         robots[4].position.set(0, -40, -115);
         robots[5].position.set(102, -40, -115);
         reset.addClass("hidden");
+        score_l.text("Score:0");
     });
         
     document.addEventListener('mousedown', onDocumentMouseDown);
     
     window.addEventListener( 'resize', onWindowResize);
-
 }
 
 function onWindowResize() 
@@ -222,18 +216,14 @@ function onDocumentMouseDown(event)
 
     if (intersects.length > 0) 
     {
-        console.log(intersects[0].object.tag);
-
-       if (intersects[0].object.tag == "r")
+       if (intersects[0].object.parent.tag == "r")
        {
-            console.log(intersects[0].object.tag);
-            CLICKED = intersects[0].object;
+            CLICKED = intersects[0].object.parent;
             DeadAnimation(CLICKED);
             score += 10;
             score_l.text("Score:" + score);
         }
     } 
-
 }
 
 function run() 
@@ -254,7 +244,9 @@ function run()
     rand = Math.floor(Math.random() * (5 - 0 + 1)) + 0;
     count += 1;
 
-    if (count > 220 && rand != last){
+    if (count > 200 && rand != last)
+    {
+        console.log("Robot moving: " + rand);
         UpAnimation(robots[rand]);
         count = 0;
         last = rand;

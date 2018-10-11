@@ -28,6 +28,7 @@
       border: 0;
       overflow: hidden; 
       display: block;  
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
       background-color: rgb(233, 233, 233);
     }
 
@@ -46,13 +47,11 @@
     }
 
     #reset {
-        top: 0;
-        bottom: 0; 
-        left: 0; 
-        right: 0;
+        top: 25px;
+        left: 640px;
         position: absolute;
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 50px;
         margin: auto; 
         justify-content: center;
         align-items: center;
@@ -89,10 +88,11 @@
 
 </head>
 <body>
-    <h1 id="score">Score:0</h1>
     <h1 id="time">Time:45 </h1>
+    <h1 id="score">Score:0</h1>
     <div id="reset" class="hidden">
-        <p>Play Again</p> </div>
+        <p>Play Again</p> 
+    </div>
 <div id="container">
     <canvas id="webglcanvas"></canvas>
 </div>

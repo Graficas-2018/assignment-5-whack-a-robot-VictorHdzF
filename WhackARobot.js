@@ -2,12 +2,14 @@ var container;
 var camera, scene, raycaster, renderer;
 var mouse = new THREE.Vector2(), INTERSECTED, CLICKED;
 var radius = 100, theta = 0;
-var robot_idle;
+var robot0;
 var robot_mixer = {};
 var deadAnimator;
 var robots = [];
 var currentTime = Date.now();
 var animation = "idle";
+var tag = null;
+var animator = null;
 var score = 0;
 var timer = 0;
 var start = false;
@@ -21,7 +23,7 @@ function DeadAnimation(object)
     animator2.init({ 
         interps: [
             {
-                keys: [0, 0.5, 1, 1.5],
+                keys: [0, 0.5, 1],
                 values: [
                     {z: 0},
                     {x: 0, z: -2},
@@ -36,33 +38,26 @@ function DeadAnimation(object)
     animator2.start();
 }
 
-function UpAnimation(object, animator)
+function UpAnimation(object)
 {
-    if (!object)
-        return;
-    //duration = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
-    if (!animator)
-        animator = new KF.KeyFrameAnimator;
+    duration = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
+    animator = new KF.KeyFrameAnimator;
     var zpos = object.position.z;
     animator.init({ 
         interps: [
             {
-                keys: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5],
+                keys: [0, 0.5, 0.7, 1.0],
                 values: [
                     {z: zpos},
-                    {z: zpos + 5},
                     {z: zpos + 15},
                     {z: zpos + 15},
-                    {z: zpos + 15},
-                    {z: zpos + 15},
-                    {z: zpos + 5},
                     {z: zpos},
                 ],
                 target: object.position
             }
             ],
         loop: false,
-        duration:100,
+        duration:duration * 1200,
     });
     animator.start();
 }
@@ -83,61 +78,61 @@ function loadFBX()
             }
         } );
 
-        robot_idle = object;
-        //robot_idle = "robot_idle";
-        group.add( robot_idle );
+        robot0 = object;
+        group.add( robot0 );
+        robot0.tag = "r";
               
-        robot_mixer["idle"].clipAction( object.animations[ 0 ], robot_idle ).play();
+        robot_mixer["idle"].clipAction( object.animations[ 0 ], robot0 ).play();
 
         loader.load( 'Robot/robot_atk.fbx', function ( object ) 
         {
             robot_mixer["attack"] = new THREE.AnimationMixer( scene );
-            robot_mixer["attack"].clipAction( object.animations[ 0 ], robot_idle ).play();
+            robot_mixer["attack"].clipAction( object.animations[ 0 ], robot0 ).play();
         });
 
-        var robot = cloneFbx(robot_idle);
-        //robot.name="Robot";
-        robot.position.set(0, 18, -115);
-        robot_mixer["idle"].clipAction( object.animations[ 0 ], robot).play();
-        //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot).play();
-        group.add( robot );
-
-        console.log(robot_idle);
+        var robot1 = cloneFbx(robot0);
+        robot1.tag="r";
+        robot1.position.set(0, 18, -115);
+        robot_mixer["idle"].clipAction( object.animations[ 0 ], robot1).play();
+        //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot1).play();
+        group.add( robot1 );
 
         var robot2 = cloneFbx(object);
-        //robot2.name="Robot2";
+        robot2.tag="r";
         robot2.position.set(110, 18, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot2).play();
         //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot2 ).play();
         group.add( robot2 );
 
         var robot3 = cloneFbx(object);
-        //robot3.name="Robot3";
+        robot3.tag="r";
         robot3.position.set(-102, -40, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot3).play();
         //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot3 ).play();
         group.add( robot3 );
 
         var robot4 = cloneFbx(object);
-        //robot4.name="Robot4";
+        robot4.name="r";
         robot4.position.set(0, -40, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot4).play();
         //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot4 ).play();
         group.add( robot4 );
 
         var robot5 = cloneFbx(object);
-        //robot5.name="Robot5";
+        robot5.tag="r";
         robot5.position.set(102, -40, -115);
         robot_mixer["idle"].clipAction( object.animations[ 0 ], robot5).play();
         //robot_mixer["attack"].clipAction( object.animations[ 0 ], robot5 ).play();
         group.add( robot5 );
 
-        robots.push(robot_idle);
-        robots.push(robot);
+
+        robots.push(robot0);
+        robots.push(robot1);
         robots.push(robot2);
         robots.push(robot3);
         robots.push(robot4);
         robots.push(robot5);
+        
     });
 }
 
@@ -165,29 +160,40 @@ function createScene(canvas)
     var material = new THREE.MeshBasicMaterial( { color: 0x00000} );
     var circle1 = new THREE.Mesh( geometry, material );
     circle1.position.set(-100, 30, -100)
-    scene.add( circle1 );
+    group.add( circle1 );
     var circle2 = new THREE.Mesh( geometry, material );
     circle2.position.set(0, 30, -100)
-    scene.add( circle2 );
+    group.add( circle2 );
     var circle3 = new THREE.Mesh( geometry, material );
     circle3.position.set(100, 30, -100)
-    scene.add( circle3 );
+    group.add( circle3 );
     var circle4 = new THREE.Mesh( geometry, material );
     circle4.position.set(-100, -30, -100)
-    scene.add( circle4 );
+    group.add( circle4 );
     var circle5 = new THREE.Mesh( geometry, material );
     circle5.position.set(0, -30, -100)
-    scene.add( circle5 );
+    group.add( circle5 );
     var circle6 = new THREE.Mesh( geometry, material );
     circle6.position.set(100, -30, -100)
-    scene.add( circle6 );
+    group.add( circle6 );
     
     raycaster = new THREE.Raycaster();
    
-    timer = Date.now() + 30000;
+    timer = Date.now() + 45000;
     score_l = $("#score");
     time = $("#time");
     reset = $("#reset");
+    $("#reset").click(() =>{
+        timer = Date.now() + 45000;
+        score = 0;
+        robots[0].position.set(-110, 18, -115);
+        robots[1].position.set(0, 18, -115);
+        robots[2].position.set(110, 18, -115);
+        robots[3].position.set(-102, -40, -115);
+        robots[4].position.set(0, -40, -115);
+        robots[5].position.set(102, -40, -115);
+        reset.addClass("hidden");
+    });
         
     document.addEventListener('mousedown', onDocumentMouseDown);
     
@@ -214,12 +220,18 @@ function onDocumentMouseDown(event)
 
     var intersects = raycaster.intersectObjects( group.children, true );
 
-    if ( intersects.length > 0 ) 
+    if (intersects.length > 0) 
     {
-        CLICKED = intersects[0].object;
-        DeadAnimation(CLICKED);
-        score += 10;
-        score_l.text("Score:" + score);
+        console.log(intersects[0].object.tag);
+
+       if (intersects[0].object.tag == "r")
+       {
+            console.log(intersects[0].object.tag);
+            CLICKED = intersects[0].object;
+            DeadAnimation(CLICKED);
+            score += 10;
+            score_l.text("Score:" + score);
+        }
     } 
 
 }
@@ -233,30 +245,29 @@ function run()
     var deltat = now - currentTime;
     currentTime = now;
 
-    if(robot_idle && robot_mixer[animation])
+    if(robot0 && robot_mixer[animation])
     {
         robot_mixer[animation].update(deltat*0.001);
         KF.update();
     }
 
-    UpAnimation(robot_idle);
-
-    /*rand = Math.floor(Math.random() * (5 - 0 + 1)) + 0;
+    rand = Math.floor(Math.random() * (5 - 0 + 1)) + 0;
     count += 1;
 
-    if (count > 200 && rand != last){
-        console.log(rand);
+    if (count > 220 && rand != last){
         UpAnimation(robots[rand]);
         count = 0;
         last = rand;
     }
     if (rand == last)
         last = 7;
-    */
+
     time.text("Time:" + Math.round((timer - now)/1000));
 
     if (Date.now() >= timer)
     {
-        //return;
+        count = 0;
+        time.text("Time:0");
+        reset.removeClass("hidden");
     }
 }

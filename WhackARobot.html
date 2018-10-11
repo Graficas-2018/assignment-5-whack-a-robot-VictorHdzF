@@ -54,7 +54,6 @@
         width: 80px;
         height: 80px;
         margin: auto; 
-        display: flex;
         justify-content: center;
         align-items: center;
         color: rgb(0, 0, 0);
@@ -68,7 +67,7 @@
         background-color: rgb(34, 161, 2);
     }
 
-    resert.hidden {
+    .hidden {
         display: none;
     }
 </style>
@@ -91,9 +90,9 @@
 </head>
 <body>
     <h1 id="score">Score:0</h1>
-    <h1 id="time">Time:30 </h1>
-    <!--<div id="reset" class="hidden">  -->
-        <!--<p>Play Again</p> </div>-->
+    <h1 id="time">Time:45 </h1>
+    <div id="reset" class="hidden">
+        <p>Play Again</p> </div>
 <div id="container">
     <canvas id="webglcanvas"></canvas>
 </div>
